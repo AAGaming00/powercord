@@ -9,10 +9,8 @@ const { getModule } = require('powercord/webpack');
 const { inject, uninject } = require('powercord/injector');
 
 module.exports = async () => {
-  return () => void 0;
-  /* eslint-disable */
   const guildClasses = await getModule([ 'blobContainer' ]);
-  const guildElement = (await waitFor(`.${guildClasses.blobContainer.split(' ')[0]}`)).parentElement;
+  const guildElement = (await waitFor(`.${guildClasses.blobContainer.split(' ')[0]}`)).parentElement.parentElement;
   const instance = getOwnerInstance(guildElement);
   inject('pc-utilitycls-guilds', instance.__proto__, 'render', function (args, res) {
     const { audio, badge: mentions, selected, unread, video } = this.props;
