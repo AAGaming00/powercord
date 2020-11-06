@@ -7,6 +7,9 @@
 const Module = require('module');
 const { join, dirname } = require('path');
 const { existsSync, unlinkSync } = require('fs');
+const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+require('./updater');
+require('./ipc/main');
 
 // Restore the classic path; The updater relies on it and it makes Discord go corrupt
 const electronPath = require.resolve('electron');
@@ -32,8 +35,11 @@ const electronExports = new Proxy(electron, {
 
 delete require.cache[electronPath].exports;
 require.cache[electronPath].exports = electronExports;
-
 electron.app.once('ready', () => {
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err));
+
   // @todo: Whitelist a few domains instead of removing CSP altogether; See #386
   electron.session.defaultSession.webRequest.onHeadersReceived(({ responseHeaders }, done) => {
     Object.keys(responseHeaders)
