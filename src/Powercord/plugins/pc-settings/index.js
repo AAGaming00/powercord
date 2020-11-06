@@ -144,6 +144,11 @@ module.exports = class Settings extends Plugin {
     );
   }
 
+  filterTab = (obj, predicate) => 
+  Object.keys(obj)
+        .filter( key => predicate(obj[key]) )
+        .reduce( (res, key) => Object.assign(res, { [key]: obj[key] }), {} );
+
   async patchSettingsContextMenu () {
     const { MenuItem } = await getModule([ 'MenuItem' ]);
     // const ImageMenuItem = (await getModule(x => x.default?.displayName === 'MenuItem')).default;
@@ -153,11 +158,12 @@ module.exports = class Settings extends Plugin {
         id: 'powercord',
         label: 'Powercord'
       }, Object.values(powercord.api.settings.tabs).map(tab => React.createElement(MenuItem, {
-        id: tab.category.startsWith('pc-moduleManager') ? (tab.label.toString() === '() => Messages.POWERCORD_THEMES' ? 'pc-moduleManager-themes' : 'pc-moduleManager-plugins') : tab.category,
+        id: tab.category.startsWith('pc-moduleManager') ? (tab.label.toString() === '() => Messages.POWERCORD_THEMES' ? 'pc-moduleManager-themes' : 'pc-moduleManager-plugins') : Object.keys(this.filterTab(powercord.api.settings.tabs, x => x.category === tab.category))[0],
         label: tab.label,
         action: async () => {
           const settingsModule = await getModule([ 'open', 'saveAccountChanges' ]);
-          settingsModule.open(tab.category.startsWith('pc-moduleManager') ? (tab.label.toString() === '() => Messages.POWERCORD_THEMES' ? 'pc-moduleManager-themes' : 'pc-moduleManager-plugins') : tab.category);
+          const cat = tab.category.startsWith('pc-moduleManager') ? (tab.label.toString() === '() => Messages.POWERCORD_THEMES' ? 'pc-moduleManager-themes' : 'pc-moduleManager-plugins') : Object.keys(this.filterTab(powercord.api.settings.tabs, x => x.category === tab.category))[0]
+          settingsModule.open(cat);
         }
       }))
       );
