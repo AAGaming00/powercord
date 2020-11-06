@@ -6,7 +6,7 @@ const { Plugin } = require('powercord/entities');
 
 const ErrorBoundary = require('./components/ErrorBoundary');
 const GeneralSettings = require('./components/GeneralSettings');
-// const Labs = require('./components/Labs');
+const Labs = require('./components/Labs');
 
 const FormTitle = AsyncComponent.from(getModuleByDisplayName('FormTitle'));
 const FormSection = AsyncComponent.from(getModuleByDisplayName('FormSection'));
@@ -20,14 +20,17 @@ module.exports = class Settings extends Plugin {
       label: () => Messages.POWERCORD_GENERAL_SETTINGS,
       render: GeneralSettings
     });
+    this.patchSettingsContextMenu();
 
     this.patchSettingsComponent();
     this.patchExperiments();
 
-    if (this.settings.get('__experimental_2019-12-16', false)) {
-      this.log('Experimental Settings enabled.');
-      this.patchSettingsContextMenu();
-    }
+    /*
+     * if (this.settings.get('__experimental_2019-12-16', false)) {
+     *   this.log('Experimental Settings enabled.');
+     *   this.patchSettingsContextMenu();
+     * }
+     */
   }
 
   async pluginWillUnload () {
@@ -53,9 +56,20 @@ module.exports = class Settings extends Plugin {
 
   async patchSettingsComponent () {
     const SettingsView = await getModuleByDisplayName('SettingsView');
-    inject('pc-settings-items', SettingsView.prototype, 'getPredicateSections', (_, sections) => {
+    inject('pc-settings-items', SettingsView.prototype, 'getPredicateSections', (args, sections) => {
       const changelog = sections.find(c => c.section === 'changelog');
       if (changelog) {
+        if (powercord.settings.get('experiments', false)) {
+          sections.splice(
+            sections.indexOf(changelog) + 1, 0,
+            {
+              section: 'pc-labs',
+              label: 'Powercord Labs',
+              element: () => this._renderWrapper('Powercord Labs', Labs)
+            }
+          );
+        }
+
         const settingsSections = Object.keys(powercord.api.settings.tabs).map(s => this._makeSection(s));
         sections.splice(
           sections.indexOf(changelog), 0,
@@ -131,25 +145,28 @@ module.exports = class Settings extends Plugin {
   }
 
   async patchSettingsContextMenu () {
-    const SubMenuItem = await getModuleByDisplayName('FluxContainer(SubMenuItem)');
-    const ImageMenuItem = await getModuleByDisplayName('ImageMenuItem');
-    const SettingsContextMenu = await getModuleByDisplayName('UserSettingsCogContextMenu');
-    inject('pc-settings-actions', SettingsContextMenu.prototype, 'render', (args, res) => {
-      const parent = React.createElement(SubMenuItem, {
-        label: 'Powercord',
-        render: () => powercord.api.settings.tabs.map(tab => React.createElement(ImageMenuItem, {
-          label: tab.label,
-          action: async () => {
-            const settingsModule = await getModule([ 'open', 'saveAccountChanges' ]);
-            settingsModule.open(tab.section);
-          }
-        }))
-      });
+    const { MenuItem } = await getModule([ 'MenuItem' ]);
+    // const ImageMenuItem = (await getModule(x => x.default?.displayName === 'MenuItem')).default;
+    const SettingsContextMenu = await getModule(x => x.default?.displayName === 'UserSettingsCogContextMenu');
+    console.log(SettingsContextMenu, MenuItem);
+    inject('pc-settings-actions', SettingsContextMenu, 'default', (args, res) => {
+      console.log(args, res);
+      const parent = React.createElement(MenuItem, {
+        id: 'powercord',
+        label: 'Powercord'
+      }, Object.values(powercord.api.settings.tabs).map(tab => React.createElement(MenuItem, {
+        id: tab.category.startsWith('pc-moduleManager') ? (tab.label.toString() === '() => Messages.POWERCORD_THEMES' ? 'pc-moduleManager-themes' : 'pc-moduleManager-plugins') : tab.category,
+        label: tab.label,
+        action: async () => {
+          const settingsModule = await getModule([ 'open', 'saveAccountChanges' ]);
+          settingsModule.open(tab.category.startsWith('pc-moduleManager') ? (tab.label.toString() === '() => Messages.POWERCORD_THEMES' ? 'pc-moduleManager-themes' : 'pc-moduleManager-plugins') : tab.category);
+        }
+      }))
+      );
 
-      parent.key = 'Powercord';
 
       const items = res.props.children.find(child => Array.isArray(child));
-      const changelog = items.find(item => item && item.key === 'changelog');
+      const changelog = items.find(item => item && item.props.id === 'changelog');
       if (changelog) {
         items.splice(items.indexOf(changelog), 0, parent);
       } else {
@@ -159,6 +176,7 @@ module.exports = class Settings extends Plugin {
 
       return res;
     });
+    SettingsContextMenu.default.displayName = 'UserSettingsCogContextMenu';
   }
 
   __toggleExperimental () {
