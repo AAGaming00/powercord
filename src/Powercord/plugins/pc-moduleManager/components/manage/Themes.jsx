@@ -1,8 +1,11 @@
 const { React, getModule, i18n: { Messages } } = require('powercord/webpack');
+const { open: openModal, close: closeModal } = require('powercord/modal');
+const { Confirm } = require('powercord/components/modal');
 const { TabBar } = require('powercord/components');
 const ThemeSettings = require('./ThemeSettings');
 const QuickCSS = require('./QuickCSS');
 const Base = require('./Base');
+const InstalledProduct = require('../parts/InstalledProduct');
 
 class Themes extends Base {
   constructor () {
@@ -42,30 +45,29 @@ class Themes extends Base {
     );
   }
 
-  renderBody () {
-    if (!powercord.api.labs.isExperimentEnabled('pc-moduleManager-themes2')) {
-      return (
-        <div className='powercord-plugin-soon powercord-text'>
-          <div className='wumpus'>
-            <img src='/assets/8c998f8fb62016fcfb4901e424ff378b.svg' alt='wumpus'/>
-          </div>
-          <p>{Messages.POWERCORD_THEMES_WIP1}</p>
-          <p>{Messages.POWERCORD_THEMES_WIP2}</p>
-        </div>
-      );
-    }
-    return super.renderBody();
-  }
-
   // eslint-disable-next-line no-unused-vars
   renderItem (item) {
-    console.log(item);
-    // return 'mhm';
+    return <InstalledProduct
+      product={item.manifest}
+      isEnabled={powercord.styleManager.isEnabled(item.entityID)}
+      onToggle={async v => {
+        await this._toggle(item.entityID, v);
+      }}
+      onUninstall={() => this._uninstall(item.entityID)}
+    />;
   }
 
   fetchMissing () { // @todo: better impl + i18n
     // noinspection JSIgnoredPromiseFromCall
-    powercord.pluginManager.get('pc-moduleManager')._fetchEntities('themes');
+    powercord.styleManager.get('pc-moduleManager')._fetchEntities('themes');
+  }
+
+  _toggle (themeId, enabled) {
+    if (enabled) {
+      powercord.styleManager.enable(themeId);
+    } else {
+      powercord.styleManager.disable(themeId);
+    }
   }
 
   getItems () {

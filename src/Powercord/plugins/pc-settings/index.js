@@ -6,7 +6,7 @@ const { Plugin } = require('powercord/entities');
 
 const ErrorBoundary = require('./components/ErrorBoundary');
 const GeneralSettings = require('./components/GeneralSettings');
-// const Labs = require('./components/Labs');
+const Labs = require('./components/Labs');
 
 const FormTitle = AsyncComponent.from(getModuleByDisplayName('FormTitle'));
 const FormSection = AsyncComponent.from(getModuleByDisplayName('FormSection'));
@@ -20,6 +20,7 @@ module.exports = class Settings extends Plugin {
       label: () => Messages.POWERCORD_GENERAL_SETTINGS,
       render: GeneralSettings
     });
+    this.patchSettingsContextMenu();
 
     this.patchSettingsContextMenu();
     this.patchSettingsComponent();
@@ -49,9 +50,20 @@ module.exports = class Settings extends Plugin {
 
   async patchSettingsComponent () {
     const SettingsView = await getModuleByDisplayName('SettingsView');
-    inject('pc-settings-items', SettingsView.prototype, 'getPredicateSections', (_, sections) => {
+    inject('pc-settings-items', SettingsView.prototype, 'getPredicateSections', (args, sections) => {
       const changelog = sections.find(c => c.section === 'changelog');
       if (changelog) {
+        if (powercord.settings.get('experiments', false)) {
+          sections.splice(
+            sections.indexOf(changelog) + 1, 0,
+            {
+              section: 'pc-labs',
+              label: 'Powercord Labs',
+              element: () => this._renderWrapper('Powercord Labs', Labs)
+            }
+          );
+        }
+
         const settingsSections = Object.keys(powercord.api.settings.tabs).map(s => this._makeSection(s));
         sections.splice(
           sections.indexOf(changelog), 0,
@@ -126,6 +138,11 @@ module.exports = class Settings extends Plugin {
     );
   }
 
+  filterTab = (obj, predicate) => 
+  Object.keys(obj)
+        .filter( key => predicate(obj[key]) )
+        .reduce( (res, key) => Object.assign(res, { [key]: obj[key] }), {} );
+
   async patchSettingsContextMenu () {
     const SettingsContextMenu = await getModule(m => m.default?.displayName === 'UserSettingsCogContextMenu');
     inject('pc-settings-actions', SettingsContextMenu, 'default', (_, res) => {
@@ -146,7 +163,6 @@ module.exports = class Settings extends Plugin {
         });
       }));
 
-      parent.key = 'Powercord';
 
       const items = res.props.children.find(child => Array.isArray(child));
       const changelog = items.find(item => item?.props?.id === 'changelog');
@@ -159,5 +175,6 @@ module.exports = class Settings extends Plugin {
 
       return res;
     });
+    SettingsContextMenu.default.displayName = 'UserSettingsCogContextMenu';
   }
 };

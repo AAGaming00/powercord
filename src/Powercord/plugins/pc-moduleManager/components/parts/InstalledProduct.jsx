@@ -21,7 +21,10 @@ class InstalledProduct extends BaseProduct {
         <h4>{this.props.product.name}</h4>
         <Tooltip text={this.props.isEnabled ? Messages.DISABLE : Messages.ENABLE} position='top'>
           <div>
-            <Switch value={this.props.isEnabled} onChange={v => this.props.onToggle(v.target.checked)}/>
+            <Switch value={this.props.isEnabled} onChange={v => {
+              this.props.onToggle(v.target.checked);
+              this.forceUpdate();
+            }}/>
           </div>
         </Tooltip>
       </div>

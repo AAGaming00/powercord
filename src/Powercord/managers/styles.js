@@ -178,6 +178,12 @@ module.exports = class StyleManager {
     [ ...this.themes.values() ].forEach(t => t.remove());
   }
 
+  // Utility
+
+  injectStyle (css) {
+    return document.head.appendChild(document.createElement('style')).innerHTML = css;
+  }
+
   _logError (errorType, args) {
     if (window.__SPLASH__ || window.__OVERLAY__) {
       return; // Consider an alternative logging method?
