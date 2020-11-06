@@ -3,7 +3,6 @@
  * All Rights Reserved. Licensed under the Porkord License
  * https://powercord.dev/porkord-license
  */
-require('./rdt')
 require('../polyfills');
 
 const { ipcRenderer, contextBridge } = require('electron');

@@ -8,6 +8,7 @@ const Module = require('module');
 const { join, dirname } = require('path');
 const { existsSync, unlinkSync } = require('fs');
 const electron = require('electron');
+const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer');
 const PatchedBrowserWindow = require('./browserWindow');
 require('./updater');
 require('./ipc/main');
@@ -31,8 +32,11 @@ const electronExports = new Proxy(electron, {
 
 delete require.cache[electronPath].exports;
 require.cache[electronPath].exports = electronExports;
-
 electron.app.once('ready', () => {
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err));
+
   // @todo: Whitelist a few domains instead of removing CSP altogether; See #386
   electron.session.defaultSession.webRequest.onHeadersReceived(({ responseHeaders }, done) => {
     Object.keys(responseHeaders)

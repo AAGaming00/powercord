@@ -1,4 +1,4 @@
-const { getModule, getModuleByDisplayName, messages, constants: discordConsts } = require('powercord/webpack');
+const { getModule, getModuleByDisplayName, channels, messages, constants: discordConsts } = require('powercord/webpack');
 const { inject, uninject } = require('powercord/injector');
 const { Plugin } = require('powercord/entities');
 
@@ -57,7 +57,7 @@ module.exports = class Documentation extends Plugin {
   async _ensureHighlight () {
     const module = await getModule([ 'highlight' ]);
     if (typeof module.highlight !== 'function') {
-      const currentChannel = (await getModule([ 'getChannelId' ])).getChannelId();
+      const currentChannel = channels.getChannelId();
       if (!currentChannel) {
         const router = await getModule([ 'replaceWith' ]);
         const channels = await getModule([ 'getChannels' ]);

@@ -24,3 +24,5 @@ config.json
 *injected.txt
 *.nogit.*
 User
+/logs
+/machineid
