@@ -148,7 +148,6 @@ module.exports = class Settings extends Plugin {
     const { MenuItem } = await getModule([ 'MenuItem' ]);
     // const ImageMenuItem = (await getModule(x => x.default?.displayName === 'MenuItem')).default;
     const SettingsContextMenu = await getModule(x => x.default?.displayName === 'UserSettingsCogContextMenu');
-    console.log(SettingsContextMenu, MenuItem);
     inject('pc-settings-actions', SettingsContextMenu, 'default', (args, res) => {
       console.log(args, res);
       const parent = React.createElement(MenuItem, {
