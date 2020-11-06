@@ -149,7 +149,6 @@ module.exports = class Settings extends Plugin {
     // const ImageMenuItem = (await getModule(x => x.default?.displayName === 'MenuItem')).default;
     const SettingsContextMenu = await getModule(x => x.default?.displayName === 'UserSettingsCogContextMenu');
     inject('pc-settings-actions', SettingsContextMenu, 'default', (args, res) => {
-      console.log(args, res);
       const parent = React.createElement(MenuItem, {
         id: 'powercord',
         label: 'Powercord'
