@@ -17,8 +17,8 @@ module.exports = {
     if (!powercord.account) {
       await powercord.fetchAccount();
     }
-
-    if (powercord.account && powercord.account.spotify) {
+    
+    /*if (powercord.account && powercord.account.spotify) {
       const baseUrl = powercord.settings.get('backendURL', WEBSITE);
       const resp = await get(`${baseUrl}/api/v2/users/@me/spotify`)
         .set('Authorization', powercord.account.token)
@@ -36,7 +36,7 @@ module.exports = {
       } else if (resp.token) {
         return resp.token;
       }
-    }
+    }*/
 
     console.debug('%c[SpotifyAPI]', 'color: #1ed860', 'No Spotify account linked to Powercord; Falling back to Discord\'s token');
     const spotifyMdl = await getModule([ 'getActiveSocketAndDevice' ]);
