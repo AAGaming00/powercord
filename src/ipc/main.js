@@ -2,6 +2,7 @@ const { existsSync } = require('fs');
 const { readFile } = require('fs').promises;
 const { join, dirname } = require('path');
 const { ipcMain, BrowserWindow } = require('electron');
+const { default: installExtension } = require('electron-devtools-installer');
 const sass = require('sass');
 
 if (!ipcMain) {
@@ -58,9 +59,19 @@ function compileSass (_, file) {
   });
 }
 
+/*
+ * function openBrowserWindow (opts) {
+ *   console.log(opts);
+ *   const { loadUrl, show, showInactive, webContents: { executeJavaScipt } } = 'h'
+ *   return ;
+ * }
+ */
+
 ipcMain.on('POWERCORD_GET_PRELOAD', e => e.returnValue = e.sender._powercordPreload);
 ipcMain.handle('POWERCORD_OPEN_DEVTOOLS', openDevTools);
 ipcMain.handle('POWERCORD_CLOSE_DEVTOOLS', closeDevTools);
 ipcMain.handle('POWERCORD_CACHE_CLEAR', clearCache);
 ipcMain.handle('POWERCORD_COMPILE_MF_SASS', compileSass);
 ipcMain.handle('POWERCORD_WINDOW_IS_MAXIMIZED', e => BrowserWindow.fromWebContents(e.sender).isMaximized());
+ipcMain.handle('POWERCORD_INSTALL_EXTENSION', (e, args) => installExtension(args));
+// ipcMain.handle('POWERCORD_OPEN_BROWSER_WINDOW', (e, args) => openBrowserWindow(args));

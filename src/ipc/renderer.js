@@ -31,8 +31,14 @@ global.PowercordNative = {
     return ipcRenderer.invoke('POWERCORD_CACHE_CLEAR');
   },
 
-  openBrowserWindow (opts) {
-    throw new Error('Not implemented');
+  /*
+   * openBrowserWindow (opts) {
+   *   return ipcRenderer.invoke('POWERCORD_OPEN_BROWSER_WINDOW', opts);
+   * },
+   */
+
+  installExtension (opts) {
+    return ipcRenderer.invoke('POWERCORD_INSTALL_EXTENSION', opts);
   },
 
   __compileSass (file) {
