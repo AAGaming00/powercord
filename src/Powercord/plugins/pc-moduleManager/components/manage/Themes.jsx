@@ -47,7 +47,6 @@ class Themes extends Base {
 
   // eslint-disable-next-line no-unused-vars
   renderItem (item) {
-    console.log(item);
     return <InstalledProduct
       product={item.manifest}
       isEnabled={powercord.styleManager.isEnabled(item.entityID)}
