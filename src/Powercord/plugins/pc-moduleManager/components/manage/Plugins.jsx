@@ -13,7 +13,6 @@ class Plugins extends Base {
         isEnabled={powercord.pluginManager.isEnabled(item.entityID)}
         onToggle={async v => {
           await this._toggle(item.entityID, v);
-          this.forceUpdate();
         }}
         onUninstall={() => this._uninstall(item.entityID)}
       />
