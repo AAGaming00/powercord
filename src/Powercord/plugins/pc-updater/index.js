@@ -97,7 +97,7 @@ module.exports = class Updater extends Plugin {
             }
             updates.push({
               id: entity.updateIdentifier,
-              name: entity.constructor.name,
+              name: entity.isTheme ? global._.upperFirst(global._.camelCase(entity.entityID)) : entity.constructor.name,
               icon: entity.__proto__.__proto__.constructor.name.replace('Updatable', 'Powercord'),
               commits,
               repo
