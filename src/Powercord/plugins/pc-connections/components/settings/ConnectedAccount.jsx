@@ -100,7 +100,7 @@ module.exports = class ConnectedAccount extends React.PureComponent {
 
   render () {
     const { connection } = this;
-    return <div className={classes.connection} data-is-powercord="true">
+    return <div className={classes.connection} data-is-powercord='true'>
       {this.renderHeader()}
       {typeof this.state.visibility === 'number' && this.renderConnectionOptions()}
     </div>;
