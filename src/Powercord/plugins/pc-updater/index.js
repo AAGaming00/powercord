@@ -1,6 +1,6 @@
 const { React, getModule, getModuleByDisplayName, i18n: { Messages } } = require('powercord/webpack');
 const { open: openModal, close: closeModal } = require('powercord/modal');
-const { Confirm } = require('powercord/components/modal');
+const { Text, modal: { Confirm } } = require('powercord/components');
 const { Plugin } = require('powercord/entities');
 
 const { join } = require('path');
@@ -272,9 +272,11 @@ module.exports = class Updater extends Plugin {
 
   // Change Log
   async openChangeLogs () {
+    const { openModal: openNewModal } = getModule([ 'openModal', 'closeModal' ], false);
     const ChangeLog = await this._getChangeLogsComponent();
-    openModal(() => React.createElement(ChangeLog, {
-      changeLog: this.formatChangeLog(changelog)
+    openNewModal((props) => React.createElement(ChangeLog, {
+      changeLog: this.formatChangeLog(changelog),
+      ...props
     }));
   }
 
@@ -286,10 +288,12 @@ module.exports = class Updater extends Plugin {
 
       class ChangeLog extends DiscordChangeLog {
         constructor (props) {
-          props.onScroll = () => void 0;
-          props.track = () => void 0;
           super(props);
-
+          this.onClose = props.onClose;
+          this.onCloseRequest = props.onClose;
+          this.close = this.close.bind(this)
+          this.handleScroll = () => void 0;
+          this.track = () => void 0;
           this.oldRenderHeader = this.renderHeader;
           this.renderHeader = this.renderNewHeader.bind(this);
         }
@@ -314,16 +318,17 @@ module.exports = class Updater extends Plugin {
 
         renderFooter () {
           const footer = super.renderFooter();
-          footer.props.children = React.createElement('span', {
-            dangerouslySetInnerHTML: {
-              __html: changelog.footer
-            }
-          });
+          footer.props.children = React.createElement(Text, {}, changelog.footer);
           return footer;
         }
 
         componentWillUnmount () {
           _this.settings.set('last_changelog', changelog.id);
+        }
+
+        close () {
+          super.close();
+          this.onClose();
         }
       }
 
