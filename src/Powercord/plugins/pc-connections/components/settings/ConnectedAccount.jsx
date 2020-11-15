@@ -39,20 +39,33 @@ module.exports = class ConnectedAccount extends React.PureComponent {
   renderHeader () {
     const { props: { account }, connection } = this;
     return <div className={classes.connectionHeader}>
-      <img alt={connection.name} className={classes.connectionIcon} src={connection.icon.white}/>
+      <img alt={connection.name} className={classes.connectionIcon} src={connection.icon.color}/>
       <div>
         <FormText className={classes.connectionAccountValue}>{account.name}</FormText>
         <FormText
           className={classes.connectionAccountLabel}
-          style={{ color: '#fff' }}
           type='description'
         >
-          {Messages.ACCOUNT_NAME}
+          {connection.name}
         </FormText>
-        <Clickable className={classes.connectionDelete} onClick={this.props.onDisconnect}>
-          {Messages.SERVICE_CONNECTIONS_DISCONNECT}
-        </Clickable>
       </div>
+      <Clickable
+        className={classes.connectionDelete}
+        aria-label={Messages.SERVICE_CONNECTIONS_DISCONNECT}
+        onClick={this.props.onDisconnect}
+      >
+        <svg
+          aria-hidden="false"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="currentColor"
+            d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"
+          />
+        </svg>
+      </Clickable>
     </div>;
   }
 
@@ -87,9 +100,7 @@ module.exports = class ConnectedAccount extends React.PureComponent {
 
   render () {
     const { connection } = this;
-    return <div className={classes.connection} style={{ borderColor: connection.color,
-      backgroundColor: connection.color
-    }}>
+    return <div className={classes.connection} data-is-powercord='true'>
       {this.renderHeader()}
       {typeof this.state.visibility === 'number' && this.renderConnectionOptions()}
     </div>;
