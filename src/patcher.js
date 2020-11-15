@@ -48,9 +48,9 @@ electron.app.once('ready', () => {
 
   // @todo: make this be not shit
   electron.session.defaultSession.webRequest.onBeforeRequest((details, done) => {
-    if (details.url.startsWith('https://canary.discordapp.com/_powercord')) {
+    if (details.url.startsWith('https://canary.discord.com/_powercord')) {
       // It should get restored to _powercord url later
-      done({ redirectURL: 'https://canary.discordapp.com/app' });
+      done({ redirectURL: 'https://canary.discord.com/app' });
     } else {
       done({});
     }
