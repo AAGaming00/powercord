@@ -8,7 +8,7 @@ const Module = require('module');
 const { join, dirname } = require('path');
 const { existsSync, unlinkSync } = require('fs');
 const electron = require('electron');
-const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer');
+const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 const PatchedBrowserWindow = require('./browserWindow');
 require('./updater');
 require('./ipc/main');
