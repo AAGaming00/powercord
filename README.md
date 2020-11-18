@@ -5,6 +5,24 @@ As of right now, Powercord is in *very* early stages of development, so feel fre
 # Installation
 See the [installation page of the Powercord Wiki](https://github.com/powercord-org/powercord/wiki/Installation).
 
+# Switching to this branch
+- Enable the option to show hidden folders on your favorite file explorer
+- Go to your powercord folder, then go to the `.git` folder
+- Open the file `config` on a text editor (for ex. Notepad)
+- Change this line
+
+![](https://media.discordapp.net/attachments/539180316447997974/778703903315329034/unknown.png)
+
+To this:
+
+![](https://media.discordapp.net/attachments/539180316447997974/778704191597182987/unknown.png)
+
+- Go to discord > settings > Updater
+- Click "Check for updates"
+
+Voalà, now you're using this fork
+
+
 # How can I install Powercord on Stable or PTB?
 You can't. We internally discussed about supporting all Discord channels and even ran an experiment about it, but that didn't give great results.
 Powercord was not able to run in some scenarios due to the huge internal differences and made the whole client unusable (crash on start).
