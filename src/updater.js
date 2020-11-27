@@ -12,9 +12,13 @@ const applicableEnvs = [ 'win32', 'darwin' ];
 if (applicableEnvs.includes(process.platform)) {
   console.log('[Powercord] Detected an installation sensitive to host updates. Injecting into the updater');
   const injector = require(`../injectors/${process.platform}`);
-  const squirrelUpdateScript = join(require.main.filename, '..', 'squirrelUpdate.js') || join(require.main.filename, '../../app.asar', 'app_bootstrap/squirrelUpdate.js');;
-
-  const { restart: squirrelRestart } = require(squirrelUpdateScript);
+  const squirrelUpdateScript = join(require.main.filename, '..', 'squirrelUpdate.js');
+  let squirrelRestart;
+    try {
+    { restart: squirrelRestart } = require(squirrelUpdateScript);
+  } catch {
+    { restart: squirrelRestart } = require(join(require.main.filename, '../../app.asar', 'app_bootstrap/squirrelUpdate.js'));
+  }
   require.cache[squirrelUpdateScript].exports.restart = function (app, newVersion) {
     console.log('[Powercord] Injecting in the new version');
     inject(injector).then(() => squirrelRestart(app, newVersion));
