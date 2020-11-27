@@ -15,7 +15,7 @@ class Labs extends React.Component {
           height: 60,
           src: '/assets/0694f38cb0b10cc3b5b89366a0893768.svg'
         }}
-        type={FormNotice.Types.DANGER}
+        type={FormNotice.Types.WARNING}
         title='Experiments ahead!'
         body={<>Any feature you see here is under development and is likely to be unfinished and/or broken. Powercord
           Staff will <b>NOT</b> provide any support, explain, or accept any bug report or suggestion for those. They
@@ -45,9 +45,11 @@ class Labs extends React.Component {
           alignItems: 'center',
           marginBottom: 15
         }}>
-          <b style={{ fontSize: 20 }}>{experiment.name}</b>
+          <b style={{
+            fontSize: 20,
+            flex: 1
+          }}>{experiment.name}</b>
           <Switch
-            style={{ marginLeft: 'auto' }}
             value={enabled}
             onChange={() => {
               if (enabled) {
