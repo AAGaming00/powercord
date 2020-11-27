@@ -5,6 +5,20 @@ As of right now, Powercord is in *very* early stages of development, so feel fre
 # Installation
 See the [installation page of the Powercord Wiki](https://github.com/powercord-org/powercord/wiki/Installation).
 
+# Switching to this fork
+In the directory where you installed Powercord, run:
+```bash
+git remote set-url origin "https://github.com/AAGaming00/powercord" && git pull
+```
+Then completely close Discord, replug, and re-open Discord.
+
+# Switching back to vanilla Powercord
+In the directory where you installed Powercord, run:
+```bash
+git remote set-url origin "https://github.com/powercord-org/powercord" && git pull && git reset --hard origin/HEAD
+```
+Then completely close Discord, replug, and re-open Discord.
+
 # How can I install Powercord on Stable or PTB?
 You can't. We internally discussed about supporting all Discord channels and even ran an experiment about it, but that didn't give great results.
 Powercord was not able to run in some scenarios due to the huge internal differences and made the whole client unusable (crash on start).
