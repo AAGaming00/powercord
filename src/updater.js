@@ -15,9 +15,9 @@ if (applicableEnvs.includes(process.platform)) {
   const squirrelUpdateScript = join(require.main.filename, '..', 'squirrelUpdate.js');
   let squirrelRestart;
     try {
-    { restart: squirrelRestart } = require(squirrelUpdateScript);
+    squirrelRestart = require(squirrelUpdateScript).restart;
   } catch {
-    { restart: squirrelRestart } = require(join(require.main.filename, '../../app.asar', 'app_bootstrap/squirrelUpdate.js'));
+    squirrelRestart = require(join(require.main.filename, '../../app.asar', 'app_bootstrap/squirrelUpdate.js')).restart;
   }
   require.cache[squirrelUpdateScript].exports.restart = function (app, newVersion) {
     console.log('[Powercord] Injecting in the new version');
